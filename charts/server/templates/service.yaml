@@ -1,0 +1,53 @@
+{{- if eq .Values.service.type "LoadBalancer" -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "server.fullname" . | printf "%s-tcp" }}
+  labels:
+    {{- include "server.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: tcp
+      protocol: TCP
+      name: tcp
+  selector:
+    {{- include "server.selectorLabels" . | nindent 4 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "server.fullname" . | printf "%s-udp" }}
+  labels:
+    {{- include "server.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: udp
+      protocol: UDP
+      name: udp
+  selector:
+    {{- include "server.selectorLabels" . | nindent 4 }}
+{{ else }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "server.fullname" . }}
+  labels:
+    {{- include "server.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: tcp
+      protocol: TCP
+      name: tcp
+    - port: {{ .Values.service.port }}
+      targetPort: udp
+      protocol: UDP
+      name: udp
+  selector:
+    {{- include "server.selectorLabels" . | nindent 4 }}
+{{ end }}

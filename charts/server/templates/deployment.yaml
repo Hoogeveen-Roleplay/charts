@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "server.fullname" . }}
+  labels:
+    {{- include "server.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "server.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "server.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "server.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ printf "%s-sync" .Chart.Name }}
+          image: "{{ .Values.sync.repository }}:{{ .Values.sync.tag | default .Chart.AppVersion }}"
+          volumeMounts:
+          - name: {{ .Values.storage.volume }}
+            mountPath: /tmp/git
+          env:
+          - name: GIT_SYNC_REPO
+            value: {{ .Values.sync.repo }}
+          - name: GIT_SYNC_BRANCH
+            value: {{ .Values.sync.branch }}
+          {{- with .Values.sync.username }}
+          - name: GIT_SYNC_USERNAME
+            value: {{ . }}
+          {{- end }}
+          {{- with .Values.sync.password }}
+          - name: GIT_SYNC_USERNAME
+            value: {{ . }}
+          {{- end }}
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          stdin: true 
+          tty: true
+          volumeMounts:
+          - name: {{ .Values.storage.volume }}
+            mountPath: /config
+          env:
+          - name: LICENCE_KEY
+            value: {{ .Values.licencekey }}
+          ports:
+            - name: tcp
+              containerPort: 30120
+              protocol: TCP
+            - name: udp
+              containerPort: 30120
+              protocol: UDP
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+      - name: {{ .Values.storage.volume }}
+        persistentVolumeClaim:
+          claimName: {{ include "server.fullname" . }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
