@@ -65,6 +65,7 @@ sync:
 storage:
   emptyDir: true
   # volume: fivem
+  # class: 
   size: 6Gi
   accessModes:
     - ReadWriteOnce
