@@ -60,6 +60,12 @@ spec:
           env:
           - name: LICENCE_KEY
             value: {{ .Values.licencekey }}
+          {{- if .Values.config_args }}
+          - name: NO_DEFAULT_CONFIG
+            value: "true"
+          - name: CONFIG_ARGS
+            value: {{ .Values.config_args }}
+          {{ end }}
           ports:
             - name: tcp
               containerPort: 30120
