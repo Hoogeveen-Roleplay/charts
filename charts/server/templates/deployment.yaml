@@ -71,8 +71,12 @@ spec:
             {{- toYaml .Values.resources | nindent 12 }}
       volumes:
       - name: {{ .Values.storage.volume | default (printf "%s-volume" (include "server.fullname" .)) }}
+      {{- if .Values.storage.emptyDir }}
+        emptyDir: {}
+      {{ else }}
         persistentVolumeClaim:
           claimName: {{ include "server.fullname" . }}
+      {{ end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

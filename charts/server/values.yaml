@@ -63,6 +63,7 @@ sync:
   # password: 
 
 storage:
+  emptyDir: true
   # volume: fivem
   size: 6Gi
   accessModes:
