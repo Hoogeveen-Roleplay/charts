@@ -31,7 +31,7 @@ spec:
         - name: {{ printf "%s-sync" .Chart.Name }}
           image: "{{ .Values.sync.repository }}:{{ .Values.sync.tag | default .Chart.AppVersion }}"
           volumeMounts:
-          - name: {{ .Values.storage.volume }}
+          - name: {{ .Values.storage.volume | default (printf "%s-volume" (include "server.fullname" .)) }}
             mountPath: /tmp/git
           env:
           - name: GIT_SYNC_REPO
@@ -43,7 +43,7 @@ spec:
             value: {{ . }}
           {{- end }}
           {{- with .Values.sync.password }}
-          - name: GIT_SYNC_USERNAME
+          - name: GIT_SYNC_PASSWORD
             value: {{ . }}
           {{- end }}
         - name: {{ .Chart.Name }}
@@ -54,7 +54,8 @@ spec:
           stdin: true 
           tty: true
           volumeMounts:
-          - name: {{ .Values.storage.volume }}
+          - name: {{ .Values.storage.volume | default (printf "%s-volume" (include "server.fullname" .)) }}
+            readOnly: true
             mountPath: /config
           env:
           - name: LICENCE_KEY
@@ -69,7 +70,7 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       volumes:
-      - name: {{ .Values.storage.volume }}
+      - name: {{ .Values.storage.volume | default (printf "%s-volume" (include "server.fullname" .)) }}
         persistentVolumeClaim:
           claimName: {{ include "server.fullname" . }}
       {{- with .Values.nodeSelector }}

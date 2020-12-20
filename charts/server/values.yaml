@@ -8,7 +8,7 @@ image:
   repository: spritsail/fivem
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "3184"
+  # tag: ""
 
 imagePullSecrets: []
 nameOverride: ""
@@ -63,7 +63,7 @@ sync:
   # password: 
 
 storage:
-  volume: test
+  # volume: fivem
   size: 6Gi
   accessModes:
     - ReadWriteOnce
