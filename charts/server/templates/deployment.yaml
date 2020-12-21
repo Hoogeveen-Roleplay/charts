@@ -82,6 +82,10 @@ spec:
           env:
           - name: LICENCE_KEY
             value: {{ .Values.licencekey }}
+          {{- with .Values.subdir }}
+          - name: SUBDIR
+            value: {{ . }}
+          {{- end }}
           {{- if .Values.config_args }}
           - name: NO_DEFAULT_CONFIG
             value: "true"
