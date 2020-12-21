@@ -30,6 +30,8 @@ spec:
       containers:
         - name: {{ printf "%s-sync" .Chart.Name }}
           image: "{{ .Values.sync.repository }}:{{ .Values.sync.tag | default .Chart.AppVersion }}"
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
           volumeMounts:
           - name: {{ .Values.storage.volume | default (printf "%s-volume" (include "server.fullname" .)) }}
             mountPath: /tmp/git
@@ -57,6 +59,14 @@ spec:
           {{- with .Values.sync.AddUser }}
           - name: GIT_SYNC_ADD_USER
             value: "true"
+          {{- end }}
+          {{- with .Values.sync.timeout }}
+          - name: GIT_SYNC_TIMEOUT
+            value: {{ . }}
+          {{- end }}
+          {{- with .Values.sync.submodules }}
+          - name: GIT_SYNC_SUBMODULES
+            value: {{ . }}
           {{- end }}
         - name: {{ .Chart.Name }}
           securityContext:
