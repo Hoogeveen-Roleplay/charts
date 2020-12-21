@@ -3,6 +3,10 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ include "server.fullname" . | printf "%s-tcp" }}
+    {{- with .Values.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
   labels:
     {{- include "server.labels" . | nindent 4 }}
 spec:
@@ -19,6 +23,10 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ include "server.fullname" . | printf "%s-udp" }}
+    {{- with .Values.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
   labels:
     {{- include "server.labels" . | nindent 4 }}
 spec:

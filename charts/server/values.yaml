@@ -38,6 +38,7 @@ securityContext: {}
 
 service:
   type: LoadBalancer
+  annotations: {}
   port: 30120
 
 ingress:
