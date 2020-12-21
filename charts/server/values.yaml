@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: hoogeveen-roleplay/fivem
+  repository: ghcr.io/hoogeveen-roleplay/fivem
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   # tag: ""
