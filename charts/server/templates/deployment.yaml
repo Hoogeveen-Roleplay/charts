@@ -54,6 +54,10 @@ spec:
           - name: GIT_SYNC_PASSWORD
             value: {{ . }}
           {{- end }}
+          {{- with .Values.sync.AddUser }}
+          - name: GIT_SYNC_ADD_USER
+            value: {{ . }}
+          {{- end }}
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
