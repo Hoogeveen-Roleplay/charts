@@ -62,7 +62,7 @@ spec:
           {{- end }}
           {{- with .Values.sync.timeout }}
           - name: GIT_SYNC_TIMEOUT
-            value: {{ . | quote }}
+            value: "{{ . }}"
           {{- end }}
           {{- with .Values.sync.submodules }}
           - name: GIT_SYNC_SUBMODULES
