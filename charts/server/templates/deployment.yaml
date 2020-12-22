@@ -111,6 +111,7 @@ spec:
       - name: {{ printf "%s-ssh-key" (include "server.fullname" .) }}
         secret:
           secretName: {{ .Values.sync.sshKey }}
+          defaultMode: 0644
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
