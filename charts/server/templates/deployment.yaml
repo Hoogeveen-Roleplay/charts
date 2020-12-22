@@ -108,10 +108,13 @@ spec:
       - name: {{ .Values.storage.volume | default (printf "%s-volume" (include "server.fullname" .)) }}
       {{- if .Values.storage.emptyDir }}
         emptyDir: {}
-      {{ else }}
+      {{- else if .Values.storage.path }}
+        hostPath:
+          path: {{ .Values.storage.path }}
+      {{- else }}
         persistentVolumeClaim:
           claimName: {{ include "server.fullname" . }}
-      {{ end }}
+      {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

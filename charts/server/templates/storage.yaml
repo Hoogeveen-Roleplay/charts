@@ -1,5 +1,5 @@
-{{- if not .Values.storage.emptyDir }}
-kind: {{ .Values.storage.type }}
+{{- if or (not .Values.storage.emptyDir) (not .Values.storage.path) }}
+kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
   name: {{ include "server.fullname" . }}
@@ -9,12 +9,6 @@ spec:
 {{- end }}
   accessModes:
     {{- toYaml .Values.storage.accessModes | nindent 4 }}
-{{- if eq .Values.storage.class "manual" }}
-  hostPath:
-    path: "{{.Values.storage.path }}"
-  capacity:
-    storage: {{ .Values.storage.size }}
-{{- else }}
   resources:
     requests:
       storage: {{ .Values.storage.size }}
