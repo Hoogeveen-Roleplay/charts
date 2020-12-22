@@ -68,7 +68,7 @@ spec:
           volumeMounts:
           - name: {{ printf "%s-ssh-key" (include "server.fullname" .) }}
             readOnly: true
-            mountPath: "/root/.ssh"
+            mountPath: "/etc/secrets-mount/"
           - name: {{ .Values.storage.volume | default (printf "%s-volume" (include "server.fullname" .)) }}
             mountPath: /tmp/git
           env:
@@ -111,7 +111,6 @@ spec:
       - name: {{ printf "%s-ssh-key" (include "server.fullname" .) }}
         secret:
           secretName: {{ .Values.sync.sshKey }}
-          defaultMode: 384
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
