@@ -68,7 +68,7 @@ spec:
           volumeMounts:
           - name: {{ printf "%s-ssh-key" (include "server.fullname" .) }}
             readOnly: true
-            mountPath: "/etc/secrets-mount/"
+            mountPath: "/etc/git-secret"
           - name: {{ .Values.storage.volume | default (printf "%s-volume" (include "server.fullname" .)) }}
             mountPath: /tmp/git
           env:
@@ -96,6 +96,16 @@ spec:
           - name: DEBUG
             value: "true"
           {{- end }}
+          - name: GIT_SYNC_TIMEOUT
+            value: "3600"
+          - name: GIT_SYNC_SSH
+            value: "true"
+          - name: GIT_SSH_KEY_FILE
+            value: "/etc/git-secret/id_rsa"
+          - name: GIT_KNOWN_HOSTS
+            value: "false"
+          - name: GIT_SYNC_ADD_USER
+            value: "true"
         {{- end }}
       volumes:
       - name: {{ .Values.storage.volume | default (printf "%s-volume" (include "server.fullname" .)) }}
@@ -111,6 +121,7 @@ spec:
       - name: {{ printf "%s-ssh-key" (include "server.fullname" .) }}
         secret:
           secretName: {{ .Values.sync.sshKey }}
+          defaultMode: 0400
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
