@@ -13,8 +13,11 @@ spec:
   {{- if eq .Values.storage.class "manual" }}
   hostPath:
     path: "{{.Values.storage.path }}"
-  {{ end }}
+  capacity:
+    storage: {{ .Values.storage.size }}
+  {{ else }}
   resources:
     requests:
       storage: {{ .Values.storage.size }}
+  {{ end }}
 {{ end }}
