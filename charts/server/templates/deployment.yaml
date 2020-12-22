@@ -28,6 +28,38 @@ spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          stdin: true 
+          tty: true
+          volumeMounts:
+          - name: {{ .Values.storage.volume | default (printf "%s-volume" (include "server.fullname" .)) }}
+            mountPath: /config
+          env:
+          - name: LICENCE_KEY
+            value: {{ .Values.licencekey }}
+          {{- with .Values.subdir }}
+          - name: SUBDIR
+            value: {{ . }}
+          {{- end }}
+          {{- if .Values.config_args }}
+          - name: NO_DEFAULT_CONFIG
+            value: "true"
+          - name: CONFIG_ARGS
+            value: {{ .Values.config_args }}
+          {{ end }}
+          ports:
+            - name: tcp
+              containerPort: 30120
+              protocol: TCP
+            - name: udp
+              containerPort: 30120
+              protocol: UDP
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
         - name: {{ printf "%s-sync" .Chart.Name }}
           image: "{{ .Values.sync.repository }}:{{ .Values.sync.tag | default .Chart.AppVersion }}"
           securityContext:
@@ -68,39 +100,6 @@ spec:
           - name: GIT_SYNC_SUBMODULES
             value: {{ . }}
           {{- end }}
-        - name: {{ .Chart.Name }}
-          securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
-          stdin: true 
-          tty: true
-          volumeMounts:
-          - name: {{ .Values.storage.volume | default (printf "%s-volume" (include "server.fullname" .)) }}
-            readOnly: true
-            mountPath: /config
-          env:
-          - name: LICENCE_KEY
-            value: {{ .Values.licencekey }}
-          {{- with .Values.subdir }}
-          - name: SUBDIR
-            value: {{ . }}
-          {{- end }}
-          {{- if .Values.config_args }}
-          - name: NO_DEFAULT_CONFIG
-            value: "true"
-          - name: CONFIG_ARGS
-            value: {{ .Values.config_args }}
-          {{ end }}
-          ports:
-            - name: tcp
-              containerPort: 30120
-              protocol: TCP
-            - name: udp
-              containerPort: 30120
-              protocol: UDP
-          resources:
-            {{- toYaml .Values.resources | nindent 12 }}
       volumes:
       - name: {{ .Values.storage.volume | default (printf "%s-volume" (include "server.fullname" .)) }}
       {{- if .Values.storage.emptyDir }}
