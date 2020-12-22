@@ -100,6 +100,10 @@ spec:
           - name: GIT_SYNC_SUBMODULES
             value: {{ . }}
           {{- end }}
+          {{- if .Values.sync.debug }}
+          - name: DEBUG
+            value: "true"
+          {{- end }}
       volumes:
       - name: {{ .Values.storage.volume | default (printf "%s-volume" (include "server.fullname" .)) }}
       {{- if .Values.storage.emptyDir }}
