@@ -60,6 +60,7 @@ spec:
               protocol: UDP
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+        {{- if .Values.sync.enabled -}}
         - name: {{ printf "%s-sync" .Chart.Name }}
           image: "{{ .Values.sync.repository }}:{{ .Values.sync.tag | default .Chart.AppVersion }}"
           securityContext:
@@ -104,6 +105,7 @@ spec:
           - name: DEBUG
             value: "true"
           {{- end }}
+        {{- end }}
       volumes:
       - name: {{ .Values.storage.volume | default (printf "%s-volume" (include "server.fullname" .)) }}
       {{- if .Values.storage.emptyDir }}
