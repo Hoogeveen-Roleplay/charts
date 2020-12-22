@@ -60,17 +60,17 @@ spec:
               protocol: UDP
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-        {{- if .Values.sync.enabled -}}
+        {{ if .Values.sync.enabled -}}
         - name: {{ printf "%s-sync" .Chart.Name }}
           image: "{{ .Values.sync.repository }}:{{ .Values.sync.tag | default .Chart.AppVersion }}"
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           volumeMounts:
-          - name: {{ .Values.storage.volume | default (printf "%s-volume" (include "server.fullname" .)) }}
-            mountPath: /tmp/git
-          - name: ssh-key
+          - name: {{ printf "%s-ssh-key" (include "server.fullname" .) }}
             readOnly: true
             mountPath: "/root/.ssh"
+          - name: {{ .Values.storage.volume | default (printf "%s-volume" (include "server.fullname" .)) }}
+            mountPath: /tmp/git
           env:
           - name: GIT_SYNC_REPO
             value: {{ .Values.sync.repo }}
@@ -108,7 +108,7 @@ spec:
         persistentVolumeClaim:
           claimName: {{ include "server.fullname" . }}
       {{- end }}
-      - name: ssh-key
+      - name: {{ printf "%s-ssh-key" (include "server.fullname" .) }}
         secret:
           secretName: {{ .Values.sync.sshKey }}
       {{- with .Values.nodeSelector }}
