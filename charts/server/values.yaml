@@ -65,6 +65,7 @@ sync:
 
 storage:
   emptyDir: true
+  type: PersistentVolumeClaim
   # volume: fivem
   # class: 
   size: 6Gi

@@ -1,8 +1,5 @@
 {{- if not .Values.storage.emptyDir }}
-{{- if eq .Values.storage.class "manual" }}
-kind: PersistentVolume
-{{ else }}
-kind: PersistentVolumeClaim
+kind: {{ .Values.storage.type }}
 {{ end }}
 apiVersion: v1
 metadata:
