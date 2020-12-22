@@ -1,6 +1,5 @@
 {{- if not .Values.storage.emptyDir }}
 kind: {{ .Values.storage.type }}
-{{ end }}
 apiVersion: v1
 metadata:
   name: {{ include "server.fullname" . }}
