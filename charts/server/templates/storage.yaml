@@ -1,4 +1,4 @@
-{{- if or (not .Values.storage.emptyDir) (not .Values.storage.path) }}
+{{- if and (not .Values.storage.emptyDir) (not .Values.storage.path) }}
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
@@ -12,4 +12,4 @@ spec:
   resources:
     requests:
       storage: {{ .Values.storage.size }}
-{{- end }}
+{{ end }}
