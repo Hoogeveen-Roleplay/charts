@@ -9,7 +9,7 @@ spec:
 {{ end }}
   accessModes:
     {{- toYaml .Values.storage.accessModes | nindent 4 }}
-  {{- if eq .Values.storage.class "manual" -}}
+  {{- if eq .Values.storage.class "manual" }}
   hostPath:
     path: "{{.Values.storage.path }}"
   {{ end }}
