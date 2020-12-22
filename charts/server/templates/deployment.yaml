@@ -68,6 +68,9 @@ spec:
           volumeMounts:
           - name: {{ .Values.storage.volume | default (printf "%s-volume" (include "server.fullname" .)) }}
             mountPath: /tmp/git
+          - name: ssh-key
+            readOnly: true
+            mountPath: "/root/.ssh"
           env:
           - name: GIT_SYNC_REPO
             value: {{ .Values.sync.repo }}
@@ -89,18 +92,6 @@ spec:
           - name: GIT_SYNC_PASSWORD
             value: {{ . }}
           {{- end }}
-          {{- with .Values.sync.AddUser }}
-          - name: GIT_SYNC_ADD_USER
-            value: "true"
-          {{- end }}
-          {{- with .Values.sync.timeout }}
-          - name: GIT_SYNC_TIMEOUT
-            value: "{{ . }}"
-          {{- end }}
-          {{- with .Values.sync.submodules }}
-          - name: GIT_SYNC_SUBMODULES
-            value: {{ . }}
-          {{- end }}
           {{- if .Values.sync.debug }}
           - name: DEBUG
             value: "true"
@@ -117,6 +108,9 @@ spec:
         persistentVolumeClaim:
           claimName: {{ include "server.fullname" . }}
       {{- end }}
+      - name: ssh-key
+        secret:
+          secretName: {{ .Values.sync.sshKey }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
