@@ -41,6 +41,10 @@ service:
   annotations: {}
   port: 30120
 
+txadmin:
+  type: ClusterIP
+  port: 40120
+
 ingress:
   enabled: false
   annotations: {}

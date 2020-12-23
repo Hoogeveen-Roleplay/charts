@@ -59,3 +59,19 @@ spec:
   selector:
     {{- include "server.selectorLabels" . | nindent 4 }}
 {{ end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "server.fullname" . | printf "%s-txadmin" }}
+  labels:
+    {{- include "server.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.txadmin.type }}
+  ports:
+    - port: {{ .Values.txadmin.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "server.selectorLabels" . | nindent 4 }}

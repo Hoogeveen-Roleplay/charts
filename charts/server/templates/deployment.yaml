@@ -52,6 +52,9 @@ spec:
             value: {{ .Values.config_args }}
           {{ end }}
           ports:
+            - name: http
+              containerPort: 40120
+              protocol: TCP
             - name: tcp
               containerPort: 30120
               protocol: TCP
