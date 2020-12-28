@@ -13,6 +13,16 @@ entries:
   server:
   - apiVersion: v2
     appVersion: 1.0.7
+    created: "2020-12-28T16:58:06.803140172Z"
+    description: A Helm chart for Kubernetes
+    digest: 8a46253809747020ab86fa3a698a87a6c2806d27e04115b2f1485bb9db753049
+    name: server
+    type: application
+    urls:
+    - https://github.com/Hoogeveen-Roleplay/charts/releases/download/server-0.3.4/server-0.3.4.tgz
+    version: 0.3.4
+  - apiVersion: v2
+    appVersion: 1.0.7
     created: "2020-12-23T14:29:25.669689693Z"
     description: A Helm chart for Kubernetes
     digest: d64e0b32aafbabbf8faf5ef18e612009f56d8c62cb9ecee05fc3d9b625d453ba
