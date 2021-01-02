@@ -87,12 +87,12 @@ spec:
           - name: GIT_SYNC_DEST
             value: {{ . }}
           {{- end }}
-          {{- with .Values.sync.username }}
-          - name: GIT_SYNC_USERNAME
+          {{- with .Values.sync.domain }}
+          - name: GIT_SYNC_SSH_DOMAIN
             value: {{ . }}
           {{- end }}
-          {{- with .Values.sync.password }}
-          - name: GIT_SYNC_PASSWORD
+          {{- with .Values.sync.poll_interval }}
+          - name: POLL_INTERVAL
             value: {{ . }}
           {{- end }}
           {{- if .Values.sync.debug }}
