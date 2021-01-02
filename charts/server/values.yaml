@@ -61,7 +61,7 @@ ingress:
 sync:
   enabled: true
   repository: ghcr.io/hoogeveen-roleplay/git-sync
-  tag: "0.1.3"
+  tag: "0.1.4"
   repo: ""
   branch: master
   # username: 
