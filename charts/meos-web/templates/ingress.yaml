@@ -1,51 +1,32 @@
-
 {{- if .Values.ingress.enabled -}}
-{{- $fullName := include "meos-web.fullname" . -}}
-{{- $svcPort := .Values.service.port -}}
-{{- if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
-
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ $fullName }}-cm
-data:
-  SCRIPT_FILENAME: "/app/index.php"
----
-apiVersion: networking.k8s.io/v1beta1
-{{- else -}}
-apiVersion: extensions/v1beta1
-{{- end }}
+{{- $serviceName := include "fullname" . -}}
+{{- $servicePort := .Values.service.externalPort -}}
+apiVersion: {{ template "common.capabilities.ingress.apiVersion" . }}
 kind: Ingress
 metadata:
-  name: {{ $fullName }}
+  name: {{ template "fullname" . }}
   labels:
-    {{- include "meos-web.labels" . | nindent 4 }}
-  {{- with .Values.ingress.annotations }}
+    app: {{ template "fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
   annotations:
-    nginx.ingress.kubernetes.io/fastcgi-params-configmap: "{{$fullName}}-cm"
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
-spec:
-  {{- if .Values.ingress.tls }}
-  tls:
-    {{- range .Values.ingress.tls }}
-    - hosts:
-        {{- range .hosts }}
-        - {{ . | quote }}
-        {{- end }}
-      secretName: {{ .secretName }}
+    {{- range $key, $value := .Values.ingress.annotations }}
+      {{ $key }}: {{ $value | quote }}
     {{- end }}
-  {{- end }}
+spec:
   rules:
-    {{- range .Values.ingress.hosts }}
-    - host: {{ .host | quote }}
+    {{- range $host := .Values.ingress.hosts }}
+    - host: {{ $host }}
       http:
         paths:
-          {{- range .paths }}
-          - path: {{ .path }}
+          - path: /
             backend:
-              serviceName: {{ $fullName }}
-              servicePort: {{ $svcPort }}
-          {{- end }}
-    {{- end }}
-  {{- end }}
+              serviceName: {{ $serviceName }}
+              servicePort: {{ $servicePort }}
+    {{- end -}}
+  {{- if .Values.ingress.tls }}
+  tls:
+{{ toYaml .Values.ingress.tls | indent 4 }}
+  {{- end -}}
+{{- end -}}

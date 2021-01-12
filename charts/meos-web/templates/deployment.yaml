@@ -1,57 +1,74 @@
-apiVersion: apps/v1
+apiVersion: {{ template "common.capabilities.deployment.apiVersion" . }}
 kind: Deployment
 metadata:
-  name: {{ include "meos-web.fullname" . }}
+  name: {{ template "fullname" . }}-phpfpm
   labels:
-    {{- include "meos-web.labels" . | nindent 4 }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
 spec:
-  {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
-  {{- end }}
   selector:
     matchLabels:
-      {{- include "meos-web.selectorLabels" . | nindent 6 }}
+      app: {{ template "fullname" . }}-phpfpm
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
-      annotations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
       labels:
-        {{- include "meos-web.selectorLabels" . | nindent 8 }}
+        app: {{ template "fullname" . }}-phpfpm
     spec:
-      {{- with .Values.imagePullSecrets }}
-      imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      serviceAccountName: {{ include "meos-web.serviceAccountName" . }}
-      securityContext:
-        {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
-        - name: {{ .Chart.Name }}
-          securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
-          ports:
-            - name: fastcgi
-              containerPort: 9000
-          readinessProbe:
-            tcpSocket:
-              port: fastcgi
-            initialDelaySeconds: 10
-            timeoutSeconds: 5
-          resources:
-            {{- toYaml .Values.resources | nindent 12 }}
-      {{- with .Values.nodeSelector }}
-      nodeSelector:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.affinity }}
-      affinity:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.tolerations }}
-      tolerations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+      - name: {{ template "fullname" . }}-phpfpm
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - containerPort: {{ .Values.phpfpmService.phpfpmPort }}
+        resources:
+{{ toYaml .Values.resources | indent 12 }}
+        readinessProbe:
+          tcpSocket:
+            port: {{ .Values.phpfpmService.phpfpmPort }}
+          initialDelaySeconds: 10
+          timeoutSeconds: 5
+---
+apiVersion: {{ template "common.capabilities.deployment.apiVersion" . }}
+kind: Deployment
+metadata:
+  name: {{ template "fullname" . }}-nginx
+  labels:
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+spec:
+  selector:
+    matchLabels:
+      app: {{ template "fullname" . }}-nginx
+  replicas: {{ .Values.replicaCount }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "fullname" . }}-nginx
+    spec:
+      containers:
+      - name: {{ template "fullname" . }}-nginx
+        image: "bitnami/nginx:latest"
+        imagePullPolicy: {{ default "" .Values.image.pullPolicy | quote }}
+        ports:
+        - name: http
+          containerPort: {{ .Values.nginxService.internalPort }}
+        - name: https
+          containerPort: 8443
+        livenessProbe:
+          httpGet:
+            path: /
+            port: http
+          initialDelaySeconds: 30
+          timeoutSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /
+            port: http
+          initialDelaySeconds: 5
+          timeoutSeconds: 1
+        volumeMounts:
+        - name: nginx-config
+          mountPath: /opt/bitnami/nginx/conf/server_blocks
+      volumes:
+      - name: nginx-config
+        configMap:
+          name: {{ template "fullname" . }}
