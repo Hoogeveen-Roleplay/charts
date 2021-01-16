@@ -4,13 +4,13 @@
 replicaCount: 1
 image:
   repository: ghcr.io/hoogeveen-roleplay/meos
-  tag: 0.0.2
+  tag: 0.0.3
   pullPolicy: IfNotPresent
 nginxService:
   name: nginx
   type: NodePort
-  externalPort: 80
-  internalPort: 8080
+  externalPort: 8080
+  internalPort: 8080 
 phpfpmService:
   name: phpfpm
   type: NodePort
