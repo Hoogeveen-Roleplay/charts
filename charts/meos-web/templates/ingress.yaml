@@ -22,7 +22,7 @@ spec:
         paths:
           - path: /
             backend:
-              serviceName: {{ $serviceName }}
+              serviceName: {{ $serviceName | printf "%s-nginx" }}
               servicePort: {{ $servicePort }}
     {{- end -}}
   {{- if .Values.ingress.tls }}
