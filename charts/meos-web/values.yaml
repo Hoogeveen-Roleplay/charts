@@ -4,13 +4,13 @@
 replicaCount: 1
 image:
   repository: ghcr.io/hoogeveen-roleplay/meos
-  tag: 0.0.4
+  tag: 0.0.5
   pullPolicy: IfNotPresent
 nginxService:
   name: nginx
   type: NodePort
   externalPort: 8080
-  internalPort: 8080 
+  internalPort: 80 
 phpfpmService:
   name: phpfpm
   type: NodePort
@@ -31,7 +31,7 @@ ingress:
 config:
   nginx.conf: |-
     server {
-      listen 0.0.0.0:8080;
+      listen 0.0.0.0:80;
       root /app;
       location / {
         index index.html index.php;
