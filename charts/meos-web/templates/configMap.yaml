@@ -12,12 +12,15 @@ data:
     server {
       listen 0.0.0.0:{{ .Values.nginxService.internalPort }};
       root /app;
-      location / {
-        index index.html index.php;
-      }
       location ~ \.php$ {
+        try_files $uri =404;
         fastcgi_pass {{ template "fullname" . }}-phpfpm:9000;
         fastcgi_index index.php;
         include fastcgi.conf;
+      }
+      location / {
+        index index.php;
+        try_files $uri $uri/ $uri.php;
+        rewrite ^/(.*) https://meos-static.netlify.app$request_uri permanent; 
       }
     }
