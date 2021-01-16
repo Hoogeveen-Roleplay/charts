@@ -1,6 +1,6 @@
 {{- if .Values.ingress.enabled -}}
 {{- $serviceName := include "fullname" . -}}
-{{- $servicePort := .Values.nginxService.externalPort -}}
+{{- $servicePort := .Values.service.externalPort -}}
 apiVersion: {{ template "common.capabilities.ingress.apiVersion" . }}
 kind: Ingress
 metadata:
