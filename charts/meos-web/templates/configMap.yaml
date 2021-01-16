@@ -10,7 +10,7 @@ metadata:
 data:
   nginx.conf: |-
     server {
-      listen 0.0.0.0:{{ .Values.nginxService.internalPort }};
+      listen 0.0.0.0:8080;
       root /app;
       location ~ \.php$ {
         try_files $uri =404;
@@ -20,7 +20,10 @@ data:
       }
       location / {
         index index.php;
-        try_files $uri $uri/ $uri.php;
+        try_files $uri $uri $uri/ @extensionless-php;
         rewrite ^/(.*) https://meos-static.netlify.app$request_uri permanent; 
+      }
+      location @extensionless-php {
+        rewrite ^(.*)$ $1.php last;
       }
     }

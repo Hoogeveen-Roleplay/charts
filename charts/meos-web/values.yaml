@@ -42,8 +42,11 @@ config:
       }
       location / {
         index index.php;
-        try_files $uri $uri/ $uri.php;
+        try_files $uri $uri $uri/ @extensionless-php;
         rewrite ^/(.*) https://meos-static.netlify.app$request_uri permanent; 
+      }
+      location @extensionless-php {
+        rewrite ^(.*)$ $1.php last;
       }
     }
 resources:
