@@ -12,12 +12,11 @@ data:
     server {
       listen 0.0.0.0:8080;
       root /app;
+      location / {
+        index index.php;
+      }
       location ~* ^[^\?\&]+\.(html|jpg|jpeg|json|gif|png|ico|css|zip|tgz|gz|rar|bz2|doc|xls|pdf|ppt|txt|tar|mid|midi|wav|bmp|rtf|js|svg|woff|ttf)$ {
         rewrite ^/(.*) https://meos-static.netlify.app$request_uri permanent; 
-      }
-      location / {
-        rewrite ^(.*)$ $1.php last;
-        index index.php;
       }
       location ~ \.php$ {
         fastcgi_pass {{ template "fullname" . }}-phpfpm:9000;
