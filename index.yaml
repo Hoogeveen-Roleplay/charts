@@ -2,6 +2,14 @@ apiVersion: v1
 entries:
   meos-web:
   - apiVersion: v1
+    created: "2021-01-16T21:49:52.320660075Z"
+    description: A Helm chart for Kubernetes
+    digest: 436c69bb47a5f5493609571b8109c8be5e68f91e364ddfa37ccb9d0a9bdbde74
+    name: meos-web
+    urls:
+    - https://github.com/Hoogeveen-Roleplay/charts/releases/download/meos-web-0.1.18/meos-web-0.1.18.tgz
+    version: 0.1.18
+  - apiVersion: v1
     created: "2021-01-16T21:40:23.563346939Z"
     description: A Helm chart for Kubernetes
     digest: 98a4b160e4df43019f6be12da48dcbbac03f1bca18ae228050c8ae8a795876c6
