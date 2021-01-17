@@ -10,25 +10,25 @@ metadata:
 data:
   nginx.conf: |-
     server {
-		  listen 0.0.0.0:8080;
-		  root /app;
-		  location ~* ^[^\\?\\&]+\\.(jpg|jpeg|json|gif|png|ico|css|zip|tgz|gz|rar|bz2|doc|xls|pdf|ppt|txt|tar|mid|midi|wav|bmp|rtf|js|svg|woff|ttf)$ {
-		    rewrite ^/(.*) https://meos-static.netlify.app$request_uri permanent; 
-		  }
-		  location = / {
-		    return 301 $scheme://meos.hoogeveenroleplay.nl/index; 
-		  }
-		  location / {
-		    try_files $uri $uri/ @extensionless-php;
-		  }
-		  location @extensionless-php {
-		    rewrite ^(.*)$ $1.php last;
-		  }
-		  location ~ \\.php$ {
-		    fastcgi_pass meos-web-meos-web-phpfpm:9000;
-		    fastcgi_split_path_info ^(.+\\.php)(/.*)$;
-		    fastcgi_index index.php;
-		    include fastcgi.conf;
-		    fastcgi_param  SCRIPT_FILENAME  $request_filename;
-		  }
-		}
+      listen 0.0.0.0:8080;
+      root /app;
+      location ~* ^[^\\?\\&]+\\.(jpg|jpeg|json|gif|png|ico|css|zip|tgz|gz|rar|bz2|doc|xls|pdf|ppt|txt|tar|mid|midi|wav|bmp|rtf|js|svg|woff|ttf)$ {
+        rewrite ^/(.*) https://meos-static.netlify.app$request_uri permanent; 
+      }
+      location = / {
+        return 301 $scheme://meos.hoogeveenroleplay.nl/index; 
+      }
+      location / {
+        try_files $uri $uri/ @extensionless-php;
+      }
+      location @extensionless-php {
+        rewrite ^(.*)$ $1.php last;
+      }
+      location ~ \\.php$ {
+        fastcgi_pass meos-web-meos-web-phpfpm:9000;
+        fastcgi_split_path_info ^(.+\\.php)(/.*)$;
+        fastcgi_index index.php;
+        include fastcgi.conf;
+        fastcgi_param  SCRIPT_FILENAME  $request_filename;
+      }
+    }
