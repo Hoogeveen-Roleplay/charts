@@ -4,7 +4,7 @@
 replicaCount: 1
 image:
   repository: ghcr.io/hoogeveen-roleplay/meos
-  tag: 0.0.5
+  tag: latest
   pullPolicy: IfNotPresent
 nginxService:
   name: nginx
@@ -29,26 +29,6 @@ ingress:
     # - secretName: chart-example-tls
     #   hosts:
     #     - chart-example.local
-config:
-  nginx.conf: |-
-    server {
-      listen 0.0.0.0:8080;
-      root /app;
-      location ~ \.php$ {
-        try_files $uri =404;
-        fastcgi_pass {{ template "fullname" . }}-phpfpm:9000;
-        fastcgi_index index.php;
-        include fastcgi.conf;
-      }
-      location / {
-        index index.php;
-        try_files $uri $uri $uri/ @extensionless-php;
-        rewrite ^/(.*) https://meos-static.netlify.app$request_uri permanent; 
-      }
-      location @extensionless-php {
-        rewrite ^(.*)$ $1.php last;
-      }
-    }
 resources:
   limits:
     cpu: 100m
