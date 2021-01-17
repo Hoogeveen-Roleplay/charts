@@ -11,6 +11,9 @@ nginxService:
   type: NodePort
   externalPort: 80
   internalPort: 8080
+
+service:
+  externalPort: 80
   
 phpfpmService:
   name: phpfpm
