@@ -61,6 +61,12 @@ spec:
             - name: udp
               containerPort: 30120
               protocol: UDP
+            - name: tcp
+              containerPort: 30110
+              protocol: TCP
+            - name: udp
+              containerPort: 30110
+              protocol: UDP
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
         {{ if .Values.sync.enabled -}}
